@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<actionScriptProperties mainApplicationPath="main.mxml" projectUUID="218996e4-8837-46ff-a300-2320ac76f12a" version="6">
+  <compiler additionalCompilerArguments="-locale en_US  -default-background-color #FAF9E8" autoRSLOrdering="true" copyDependentFiles="true" flex3CompatMode="false" flexSDK="Flex 4.0" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="false" htmlGenerate="false" htmlHistoryManagement="false" htmlPlayerVersionCheck="false" includeNetmonSwc="true" outputFolderLocation="/Users/Sam/Workspace/Fat Cat Map PLATFORM/src/assets/flash" outputFolderPath="bin-debug" rootURL="http://localhost:8088/assets/flash/main.swf" sourceFolderPath="src" strict="false" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" verifyDigests="true" warn="true">
+    <compilerSourcePath/>
+    <libraryPath defaultLinkType="0">
+      <libraryPathEntry kind="4" path="">
+        <excludedEntries>
+          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/flex.swc" useDefaultLinkType="false"/>
+        </excludedEntries>
+      </libraryPathEntry>
+      <libraryPathEntry kind="1" linkType="1" path="libs"/>
+      <libraryPathEntry kind="3" linkType="1" path="/Users/Sam/Downloads/Visualizer-1.5.3-Community/Visualizer.swc" useDefaultLinkType="false"/>
+    </libraryPath>
+    <sourceAttachmentPath/>
+  </compiler>
+  <applications>
+    <application path="main.mxml"/>
+  </applications>
+  <modules/>
+  <buildCSSFiles/>
+</actionScriptProperties>
