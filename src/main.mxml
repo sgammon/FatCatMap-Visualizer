@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   minWidth="1024" minHeight="768"
+			   xmlns:COI="*"
+			   backgroundColor="#FAF9E8"
+			   preloader="fatcatmap.components.preloader.CustomPreloader"
+			   creationComplete="initComplete()">
+	
+	<fx:Declarations>
+		<!--<s:RemoteObject id="securityService" showBusyCursor="false" destination="security" endpoint="http://127.0.0.1:8088/_rpc/security" />-->
+		<!--<s:RemoteObject id="securityService" showBusyCursor="false" destination="security" endpoint="http://05-alpha.latest.fatcatmap.appspot.com/_rpc/security" />-->
+		<s:Fade alphaFrom="0.0" alphaTo="1.0" id="borderFadeIn" duration="1000" />
+		<s:Fade alphaFrom="0.0" alphaTo="1.0" id="textFadeIn" duration="700" />
+		<s:Fade alphaFrom="1.0" alphaTo="0.0" id="textFadeOut" duration="900" />
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.*;
+			import mx.controls.Alert;
+			import mx.rpc.events.*;
+			import mx.rpc.remoting.*;
+			import mx.rpc.remoting.mxml.RemoteObject;
+			
+			// Get ready for flashvars
+			[Bindable]
+			public var userText:String = '(Not logged in)';
+			
+			[Bindable]
+			public var tracking:Boolean;
+			
+			public var intervalSet:uint;
+			public var nestedIntervalSet:uint;
+			public var loggedIn:Boolean = false;
+			
+			public function initComplete():void
+			{	
+				//this.userText = Application.application.parameters.userText;
+				//this.tracking = Application.application.parameters.tracking as Boolean;
+
+				quoteBorder.visible = true;
+				
+				fatCatStage.dataService.RetrieveFirstGraph.addEventListener( ResultEvent.RESULT, fatCatStage.graphInitialize );
+				fatCatStage.dataService.RetrieveFirstGraph.addEventListener( FaultEvent.FAULT, DataFaultEvent );
+				fatCatStage.dataService.RetrieveConnectionsByKey.addEventListener( ResultEvent.RESULT, fatCatStage.graphInitialize );
+				fatCatStage.dataService.RetrieveConnectionsByKey.addEventListener( FaultEvent.FAULT, DataFaultEvent );
+				
+				fatCatStage.dataService.RetrieveFirstGraph();
+				
+				this.intervalSet = setInterval(performTextFade,3000);
+			}
+			
+			public function securityFault(event:FaultEvent):void
+			{
+				Alert.show('Security Fault: '+event.fault.toString());
+			}
+			
+			public function DataFaultEvent(event:FaultEvent):void
+			{
+				Alert.show('Data Fault: '+event.fault.toString());
+			}
+			
+			public function logInLogOut():void
+			{
+				if(this.loggedIn == true)
+				{
+					navigateToURL(new URLRequest('/logout'), '_top');
+				}
+				else
+				{
+					navigateToURL(new URLRequest('/login'), '_top');
+				}
+			}
+			
+			public function performTextFade():void
+			{
+				this.nestedIntervalSet = setInterval(performStageFade,1500);
+				quoteBorder.visible = false;
+				clearInterval(this.intervalSet);
+			}
+			
+			public function performStageFade():void
+			{
+				topBar.visible = true;
+				fatCatStage.visible = true;
+				clearInterval(this.nestedIntervalSet);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Group id="quoteBorder" visible="false" hideEffect="textFadeOut" showEffect="textFadeIn" horizontalCenter="0" verticalCenter="0">
+		<s:Label text="&quot;One man's transparency is another's humiliation.&quot;" id="openQuoteText" horizontalCenter="0" verticalCenter="-20" fontFamily="Georgia" fontSize="25" width="100%" textAlign="center" verticalAlign="middle"/>
+		<s:Label text="-Gerry Adams" id="openQuoteTextCitation" horizontalCenter="0" verticalCenter="20" fontFamily="Georgia" fontSize="25" width="100%" verticalAlign="middle" textAlign="right" color="#555555"/>
+	</s:Group>
+	
+	<COI:FatCatStage id="fatCatStage" width="100%" height="100%" showEffect="stageFadeIn" visible="false" />
+	
+	<s:Group id="topBar" visible="false" showEffect="stageFadeIn" top="15" left="0" right="0" height="30">
+		<s:HGroup right="30" verticalAlign="middle" height="30">
+			<s:Label id="usernameLabel" text="{this.userText}"  height="30" verticalAlign="middle" paddingRight="7" fontFamily="Georgia" paddingLeft="7"/>
+			<s:Line width="1" height="20" />
+			<mx:LinkButton id="settingsButton" label="Settings" height="30" fontFamily="Georgia" click="navigateToURL(new URLRequest('/settings'), '_top')"/>
+			<mx:VRule width="1" height="20"/>
+			<mx:LinkButton id="securityButton" label="Log In" height="30" fontFamily="Georgia" click="logInLogOut()" />
+		</s:HGroup>
+	</s:Group>
+	
+</s:Application>

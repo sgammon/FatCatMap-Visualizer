@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/halo">
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			[Bindable]
+			public var candidatePhoto:String = 'assets/details_photo_placeholder.png';
+			
+			[Bindable]
+			public var candidateTitle:String;
+			
+			[Bindable]
+			public var candidateParty:String;
+			
+			[Bindable]
+			public var candidateState:String;
+			
+			[Bindable]
+			public var candidateDistrict:String;
+			
+			[Bindable]
+			public var candidateName:String;
+			
+			[Bindable]
+			public var contributorOrgName:String;
+		]]>
+	</fx:Script>
+	
+	<mx:ViewStack width="100%" height="100%" left="0" top="0" id="detailsPanelViewStack">
+		
+		<s:NavigatorContent label="NoSelectedNode" width="100%" height="100%" id="noSelectedNode">
+			<s:layout>
+				<s:BasicLayout/>
+			</s:layout>
+			<s:Label id="noSelectedNodeText" text="Click on an entry for details." verticalCenter="0" horizontalCenter="0" />
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent label="CandidateNodeDetails" width="100%" height="100%" id="candidateNodeDetails">
+			<s:layout>
+				<s:BasicLayout/>
+			</s:layout>
+			<mx:Image width="60" height="70" source="{candidatePhoto}" left="8" top="10" id="candidatePhotoPlaceholder"/>
+			<s:Label text="{candidateTitle}." top="92" left="9" id="candidateTitleLabel" height="20" verticalAlign="middle"/>
+			<s:Border right="10" top="10" left="78" height="70" borderVisible="false">
+				<s:Label text="Party: {candidateParty}" top="6" horizontalCenter="0"/>
+				<s:Label text="State: {candidateState}" top="25" horizontalCenter="0"/>
+				<s:Label text="District: {candidateDistrict}" top="45" verticalAlign="middle" horizontalCenter="0" id="candidateDistrictLabel"/>
+			</s:Border>
+			<s:Label text="{candidateName}" top="92" left="44" fontSize="18" height="20" right="11" id="candidateNameLabel" verticalAlign="middle"/>
+			<mx:HRule height="1" horizontalCenter="0" top="121"/>
+			
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent label="ContributorNodeDetails" width="100%" height="100%" id="contributorNodeDetails">
+			<s:layout>
+				<s:BasicLayout/>
+			</s:layout>
+			<s:Label text="{contributorOrgName}" id="contributorNameLabel" verticalAlign="middle" textAlign="center" top="10" fontSize="14" left="10" right="10" height="45"/>
+		</s:NavigatorContent>
+		
+	</mx:ViewStack>
+	
+</s:BorderContainer>

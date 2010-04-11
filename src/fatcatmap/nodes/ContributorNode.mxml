@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COI:GraphNode  xmlns:COI="fatcatmap.components.*"
+				xmlns:mx="http://www.adobe.com/2006/mxml"
+				height="30"
+				width="{contributor_display_text.width+20}"
+				opaqueBackground="{null}"
+				horizontalScrollPolicy="off"
+				verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			[Bindable]
+			public var display_text:String;
+			
+			[Bindable]
+			public var objectData:Object;
+			
+			[Bindable]
+			public var fontWeight:String = "normal";
+		]]>
+	</mx:Script>
+	
+	<mx:Canvas width="100%" height="100%" id="innerContentCanvas" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+		<mx:Label fontSize="12"
+				  textAlign="center"
+				  id="contributor_display_text"
+				  text="{display_text}"
+				  fontFamily="Georgia"
+				  color="#000000"
+				  fontWeight="{fontWeight}" verticalCenter="0" horizontalCenter="0" paddingLeft="5" paddingRight="5"/>
+	</mx:Canvas>
+	
+</COI:GraphNode>
