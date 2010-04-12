@@ -1,7 +1,7 @@
 package fatcatmap.components
 {
 	import mx.containers.Canvas;
-	import mx.styles.StyleManager2;
+	import mx.styles.StyleManager;
 	import mx.utils.ColorUtil;
 	
 	public class GraphNode extends Canvas
@@ -16,7 +16,7 @@ package fatcatmap.components
 			var cornerRadius:Number = getStyle("cornerRadius");
 			
 			// converts the fill colors to RGB color values
-			StyleManager2.getColorNames (fillColors);
+			StyleManager.getColorNames(fillColors);
 			
 			// ready to draw!
 			graphics.clear ();

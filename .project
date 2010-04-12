@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Fat Cat Map VISUALIZER</name>
+	<name>FatCatMap-Visualizer</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -19,12 +19,17 @@
 		<link>
 			<name>bin-debug</name>
 			<type>2</type>
-			<location>/Users/Sam/Workspace/Fat Cat Map PLATFORM/src/assets/flash</location>
+			<locationURI>DOCUMENTS/FatCatMap/src/assets/flash</locationURI>
 		</link>
 		<link>
 			<name>bin-release</name>
 			<type>2</type>
-			<location>/Users/Sam/Workspace/Fat Cat Map PLATFORM/src/assets/flash</location>
+			<location>C:/Users/Sam/workspace/Fat Cat Map PLATFORM/src/assets/flash</location>
+		</link>
+		<link>
+			<name>bin-release1</name>
+			<type>2</type>
+			<location>C:/Users/Sam/Documents/Logic Workspace/FatCatMap/src/assets/flash</location>
 		</link>
 	</linkedResources>
 </projectDescription>

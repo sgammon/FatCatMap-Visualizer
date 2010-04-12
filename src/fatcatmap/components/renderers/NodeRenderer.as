@@ -25,13 +25,31 @@ package fatcatmap.components.renderers
 				
 				candidate.display_text = data['display_text'];
 				
-				var candidate_fill_colors:Array = [0x94BBBB, 0x67A1A8];
+				if (data['partytext'] == 'D')
+				{
+					var candidate_fill_colors:Array = [0x94BBBB, 0x67A1A8];
+				}
+				else if (data['partytext'] == 'R')
+				{
+					var candidate_fill_colors:Array = [0xE08A69, 0xA14A4A];
+				}
+				else if (data['partytext'] == 'I')
+				{
+					var candidate_fill_colors:Array = [0xA6956D, 0xDFE7A3];
+				}
+				else
+				{
+					var candidate_fill_colors:Array = [0xFFFFFF, 0xFFFFFF];
+				}
+				
 				var candidate_fill_alphas:Array = [1.0, 1.0];
+				
 				
 				if (data['is_root'] == 'True')
 				{
 					candidate.fontWeight = 'bold';
 				}
+				
 				
 				candidate.setStyle('fillColors',candidate_fill_colors);
 				candidate.setStyle('fillAlphas',candidate_fill_alphas);

@@ -4,7 +4,7 @@
 		  xmlns:KapLab="com.kapit.visualizer.*"
 		  xmlns:s="library://ns.adobe.com/flex/spark"
 		  xmlns:mx="library://ns.adobe.com/flex/halo" width="100%" height="100%"
-		  creationComplete="init()">
+		  creationComplete="init()" xmlns:mx1="library://ns.adobe.com/flex/mx">
 	
 	<fx:Declarations>
 		<s:RemoteObject id="dataService" showBusyCursor="false" destination="data" endpoint="http://127.0.0.1:8088/_rpc/data" />
@@ -15,9 +15,9 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.kapit.visualizer.LayoutConstants;
 			import com.kapit.visualizer.events.VisualizerEvent;
 			import com.kapit.visualizer.renderer.GenericSprite;
-			import com.kapit.visualizer.LayoutConstants;
 			
 			import mx.controls.Alert;
 			import mx.rpc.events.ResultEvent;
@@ -31,20 +31,17 @@
 			[Bindable]
 			public var selectedNodeKey:String; // key of selected node (for quick access)
 			
+			public var center:Point;
+			
 			import fatcatmap.components.renderers.NodeRenderer;
 			
 			public function init():void
 			{
-				fatCatViz.left = 0;
-				fatCatViz.right = 0;
-				fatCatViz.top = 0;
-				fatCatViz.bottom = 0;
-				fatCatViz.enableZoomOnMouseWheel = false;
-				fatCatViz.labelFields = ['display_text'];
-				fatCatViz.coloringPolicy = Visualizer.UNIFORM_COLORING;
 				fatCatViz.layout = LayoutConstants.BALLOON_LAYOUT;
-				fatCatViz.visible = false;
-				fatCatViz.enablePan = false;
+				fatCatViz.balloonLayout.nodesSpacing = 20;
+				fatCatViz.balloonLayout.overlappingAvoidMethod = LayoutConstants.DETERMINISTIC_OVERLAP_AVOID;
+				fatCatViz.cacheAsBitmap = false;
+				this.center = new Point(fatCatViz.width/2, fatCatViz.height/2);
 			}
 			
 			public function graphPreInit():void
@@ -56,17 +53,14 @@
 			{	
 				if (depth > 0)
 				{
+					var current_node:GenericSprite = fatCatViz.addNodeElement(node.object, null, this.center);
 					
-					var current_node:GenericSprite = fatCatViz.addNodeElement(node.object, null, center);
-					
-					fatCatViz.addLinkElement({id: node.key+parent.key}, parent, current_node);
+					fatCatViz.addLinkElement({id: node.key}, parent, current_node);
 					
 					for each ( var Connection:Object in node.object.connections )
 					{
 						this._recursiveGraph(current_node, Connection, center, depth-1);
 					}
-						
-				
 				}	
 				
 				else return
@@ -76,19 +70,15 @@
 			{
 				if(event.result.result!='failure')
 				{
-					var center:Point = new Point(fatCatViz.width/2, fatCatViz.height/2);
 					var GraphData:Object = event.result.response;
 					this.lastGraphData = GraphData;
 					fatCatViz.removeAll()
 					
-					var root:GenericSprite = fatCatViz.addNodeElement(GraphData.object,null,center);
-					
-					connection_count = GraphData.object.connections.length.toString();
-					connection_count_old = GraphData.connections.length.toString();
+					var root:GenericSprite = fatCatViz.addNodeElement(GraphData.object,null,this.center,GraphData.object.key);
 					
 					for each ( var Connection:Object in GraphData.object.connections )
 					{
-						this._recursiveGraph(root, Connection, center, 2);
+						this._recursiveGraph(root, Connection, center, 3);
 					}
 				}
 				else
@@ -97,6 +87,7 @@
 				}
 				dataService.RetrieveConnectionsByKey.removeEventListener(ResultEvent.RESULT, graphInitialize);
 				dataService.RetrieveConnectionsByKey.addEventListener(ResultEvent.RESULT, doGraphChange);
+				fatCatViz.updateInternalStructure();
 				this.intervalSet = setInterval(timedReLayout,1500);
 			}
 			
@@ -104,30 +95,32 @@
 			{
 				if(event.result.result!='failure')
 				{
-					var center:Point = new Point(fatCatViz.width/2, fatCatViz.height/2);
 					var GraphData:Object = event.result.response;
 					this.lastGraphData = GraphData;
 					fatCatViz.removeAll()
-					var root:GenericSprite = fatCatViz.addNodeElement(GraphData.object,null,center);
-					for each ( var Connection:Object in GraphData.connections )
+					
+					var root:GenericSprite = fatCatViz.addNodeElement(GraphData.object,null,this.center,GraphData.object.key);
+					
+					for each ( var Connection:Object in GraphData.object.connections )
 					{
-						var node:GenericSprite = fatCatViz.addNodeElement(Connection,null,center);
-						fatCatViz.addLinkElement({id:Connection.key},root,node);
+						this._recursiveGraph(root, Connection, center, 3);
 					}
-					this.intervalSet = setInterval(timedReLayout,500);
 				}
 				else
 				{
 					Alert.show('There was an internal graphing error. Please try again.');
 				}
-				
+				fatCatViz.updateInternalStructure();
+				this.intervalSet = setInterval(timedReLayout,500);
 			}
 			
 			public function timedReLayout():void
 			{
-				fatCatViz.visible=true;
+				fatCatViz.autoFit(false);
 				fatCatViz.reLayout();
-				fatCatViz.centerContent(true);
+				fatCatViz.centerContent(false);
+				fatCatViz.visible=true;
+				
 				clearInterval(this.intervalSet);
 			}
 			
@@ -196,64 +189,23 @@
 				this.selectedNodeData = event.items[0].itemRenderer.objectData as Object;
 				this.selectedNodeKey = event.items[0].itemRenderer.objectData.key as String;
 				
-				shiftGraphToSelectedNodeButton.enabled = true;
-				devForceReLayout.enabled = true;
-				
-				if (event.items[0].itemRenderer.objectData.kind == 'contributor')
-				{
-					nodeDetailsPane.contributorOrgName = event.items[0].itemRenderer.objectData.orgname;
-					nodeDetailsPane.detailsPanelViewStack.selectedChild = nodeDetailsPane.contributorNodeDetails;
-				}
-				else if (event.items[0].itemRenderer.objectData.kind == 'candidate')
-				{
-					nodeDetailsPane.candidateName = event.items[0].itemRenderer.objectData.firstname + " " + event.items[0].itemRenderer.objectData.lastname;
-					nodeDetailsPane.candidateDistrict = event.items[0].itemRenderer.objectData.district;
-					nodeDetailsPane.candidateState = event.items[0].itemRenderer.objectData.state;
-					nodeDetailsPane.candidateParty = 'Democratic';
-					nodeDetailsPane.candidateTitle = event.items[0].itemRenderer.objectData.title;
-					nodeDetailsPane.detailsPanelViewStack.selectedChild = nodeDetailsPane.candidateNodeDetails;
-				}
-				else
-				{
-					nodeDetailsPane.detailsPanelViewStack.selectedChild = nodeDetailsPane.noSelectedNode;
-				}
+				shiftGraphTo(this.selectedNodeKey);
 			}
 			
 			public function shiftGraphTo(key:String):void
 			{
 				dataService.RetrieveConnectionsByKey(key);
 				fatCatViz.visible = false;
-				
 			}
 		]]>
 	</fx:Script>
 	
-	<KapLab:Visualizer height="100%" width="100%" backgroundColor="#FAF9E8"
-					   id="fatCatViz" enablePan="false" enableZoomOnMouseWheel="false" visible="false"
+	<KapLab:Visualizer height="120%" width="120%" backgroundColor="#FAF9E8" autoLayout="true"
+					   id="fatCatViz" enablePan="true" enableZoomOnMouseWheel="false" visible="false"
 					   labelFields="{['display_text']}" creationComplete="graphPreInit()" elementClicked="handleNodeClick(event)"
 					   coloringPolicy="{Visualizer.UNIFORM_COLORING}" layout="{LayoutConstants.BALLOON_LAYOUT}" showEffect="fatCatFadeIn" hideEffect="fatCatFadeOut"/>
 	
-	<s:Panel width="200" height="75" title="Search" right="30" top="60" alpha="0.8" id="searchPanel" fontFamily="Georgia" defaultButton="{doSearch}">
-		<s:TextInput width="170" height="30" horizontalCenter="-0" verticalCenter="0" fontSize="15" id="searchInput"/>
-		<s:Button id="doSearch" visible="false" click="searchInput.text='';Alert.show('Search would happen now')"/>
-	</s:Panel>
-	
-	<s:Panel width="200" height="75" title="Controls" right="30" top="175" alpha="0.8" id="controlsPanel" fontFamily="Georgia">
-		<s:HGroup height="100%" top="0" paddingBottom="1" paddingLeft="10" paddingRight="10" id="controlsHGroup" verticalAlign="middle" horizontalCenter="0">
-			<s:ToggleButton id="dragToggle" click="zoomToggle.selected=false;" label="Drag" change="toggleGraphZoom('off');toggleGraphDrag('toggle');"/>
-			<s:ToggleButton id="zoomToggle" click="dragToggle.selected=false;" label="Zoom" change="toggleGraphDrag('off');toggleGraphZoom('toggle');"/>
-		</s:HGroup>
-	</s:Panel>
-	
-	<s:Panel width="200" title="Item Details" right="30" top="280" alpha="0.8" id="detailsPanel" fontFamily="Georgia">
-		<s:BorderContainer id="nodeDetailsContainer" borderVisible="false" width="100%" minHeight="250">
-			<!--<COI:NodeDetailsPane id="nodeDetailsPane" width="100%"  bottom="40" top="0"/>-->
-			<s:Button id="shiftGraphToSelectedNodeButton" label="Graph This" enabled="false" click="shiftGraphTo(this.selectedNodeKey)" bottom="10" left="20"/>
-			<s:Button id="devForceReLayout" label="ReLayout" enabled="false" click="fatCatViz.reLayout()" bottom="10" right="20"/>
-		</s:BorderContainer>
-		
-	</s:Panel>
-	
-	<s:Label text='FatCatMap v0.7.157.04092010 BETA (NOT FOR PUBLIC ACCESS), Copyright (©) Sam Gammon [sg@samgammon.com], 2010' bottom="10" horizontalCenter="0" color="#666666" />
+	<s:Label text='FatCatMap v0.8.100.1657.04122010 BETA (NOT FOR PUBLIC ACCESS), Copyright (©) Sam Gammon [sg@samgammon.com], 2010' bottom="10" horizontalCenter="0" color="#666666" />
+	<s:Button label="Auto-fit" click="fatCatViz.autoFit(true,1000);" left="10" bottom="7" visible="false" />
 	
 </s:Group>

@@ -9,9 +9,8 @@
 			   creationComplete="initComplete()">
 	
 	<fx:Declarations>
-		<!--<s:RemoteObject id="securityService" showBusyCursor="false" destination="security" endpoint="http://127.0.0.1:8088/_rpc/security" />-->
-		<!--<s:RemoteObject id="securityService" showBusyCursor="false" destination="security" endpoint="http://05-alpha.latest.fatcatmap.appspot.com/_rpc/security" />-->
 		<s:Fade alphaFrom="0.0" alphaTo="1.0" id="borderFadeIn" duration="1000" />
+		<s:Fade alphaFrom="0.0" alphaTo="1.0" id="stageFadeIn" duration="1000" />
 		<s:Fade alphaFrom="0.0" alphaTo="1.0" id="textFadeIn" duration="700" />
 		<s:Fade alphaFrom="1.0" alphaTo="0.0" id="textFadeOut" duration="900" />
 	</fx:Declarations>
@@ -37,9 +36,6 @@
 			
 			public function initComplete():void
 			{	
-				//this.userText = Application.application.parameters.userText;
-				//this.tracking = Application.application.parameters.tracking as Boolean;
-
 				quoteBorder.visible = true;
 				
 				fatCatStage.dataService.RetrieveFirstGraph.addEventListener( ResultEvent.RESULT, fatCatStage.graphInitialize );
@@ -87,7 +83,6 @@
 				fatCatStage.visible = true;
 				clearInterval(this.nestedIntervalSet);
 			}
-			
 		]]>
 	</fx:Script>
 	
