@@ -7,8 +7,8 @@
 		  creationComplete="init()" xmlns:mx1="library://ns.adobe.com/flex/mx">
 	
 	<fx:Declarations>
-		<s:RemoteObject id="dataService" showBusyCursor="false" destination="data" endpoint="http://127.0.0.1:8088/_rpc/data" />
-		<!--<s:RemoteObject id="dataService" showBusyCursor="false" destination="data" endpoint="http://beta.fatcatmap.appspot.com/_rpc/data" />-->
+		<!--<s:RemoteObject id="dataService" showBusyCursor="false" destination="data" endpoint="http://127.0.0.1:8088/_rpc/data" />-->
+		<s:RemoteObject id="dataService" showBusyCursor="false" destination="data" endpoint="http://fatcatmap.appspot.com/_rpc/data" />
 		<s:Fade alphaFrom="1.0" alphaTo="0.0" id="fatCatFadeOut" duration="500" />
 		<s:Fade alphaFrom="0.0" alphaTo="1.0" id="fatCatFadeIn" duration="500" />
 	</fx:Declarations>
@@ -205,7 +205,7 @@
 					   labelFields="{['display_text']}" creationComplete="graphPreInit()" elementClicked="handleNodeClick(event)"
 					   coloringPolicy="{Visualizer.UNIFORM_COLORING}" layout="{LayoutConstants.BALLOON_LAYOUT}" showEffect="fatCatFadeIn" hideEffect="fatCatFadeOut"/>
 	
-	<s:Label text='FatCatMap v0.8.100.1657.04122010 BETA (NOT FOR PUBLIC ACCESS), Copyright (©) Sam Gammon [sg@samgammon.com], 2010' bottom="10" horizontalCenter="0" color="#666666" />
+	<s:Label text='FatCatMap v0.8.100.1658.04122010 BETA (NOT FOR PUBLIC ACCESS), Copyright (©) Sam Gammon [sg@samgammon.com], 2010' bottom="10" horizontalCenter="0" color="#666666" />
 	<s:Button label="Auto-fit" click="fatCatViz.autoFit(true,1000);" left="10" bottom="7" visible="false" />
 	
 </s:Group>
